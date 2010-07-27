@@ -3,35 +3,12 @@
 	$fieldQty = 10;
 	
 	// Start document, on-page Javascript included below.
-	echo '
-		<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"> 
+	echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"> 
 		<html>
 		<title>Event Form Design</title>	
 		
 		<head>
-		<script type="text/javascript"> // Note: If we want PHP to modify the script, it may be necessary to have this in-place on the page.
-		<!--		
-			function enableDataEntry()
-			{ // Initialise (Poor discipline, determine if there is a better way to initialise)
-			var enableArray = document.getElementsbyName(isEnabled);
-			// Warning: Need to pass by reference not by value. Ensure this is the case.
-			var labelArray = document.getElementsbyName(label);
-			var typeArray = document.getElementsbyName(dataType);
-			
-			for(var i = 1; i < $fieldQty; i++)
-			{
-				if(enableArray[i].checked) // Determine if this works in Javascript
-				{ // Need to pass by reference. Check if this succeeds.
-					labelArray[i].disabled="false";
-					typeArray[i].disabled="false";
-				}
-				else { // Assume it has been unchecked.
-					labelArray[i].disabled="true";
-					typeArray[i].disabled="true";
-				}
-			}
-		// -->
-		</script>
+		
 		</head>';
 	
 	/*
@@ -45,19 +22,17 @@
 	- css should also replace the 'align' property in th as it is deprecated.
 	*/
 	
-	echo	'<body>
-	
+	echo '<body>
 			<form action="formReview.php" method="post">
 
 			<table border="1">
 			<tr>
-				<th  align="center" valign="middle" scope="col">Enabled? <small>(Yes/No)</small></th>
+				<th  align="center" valign="middle" scope="col">Enable / Disable</th>
 				<th  align="center" valign="middle" scope="col">Field Label</th>
 				<th  align="center" valign="middle" scope="col">Data Type</th>
 			</tr>';
 
-
-	for($i = 1; $i < $fieldQty; $i++) 
+	for($i = 1; $i <= $fieldQty; $i++) 
 	{	/* Looping production of input fields.
 		
 		Notes: 
@@ -66,31 +41,69 @@
 		
 		Description of Data Types:
 		
-		Customer Name (CName) - 
-		Salutation - 
-		Company Name - 
-		Designation
-		Email
-		Custom
+		Customer Name (CName) - String to hold customer name
+		Salutation (Title) - a.k.a. Titles (e.g. Mr., Mrs.)
+		Company Name (Company) - String to hold customer's company
+		Designation - Job Role
+		Email - String
+		Custom - Special field; must be manipulable to any design required
+				- Suggest using Javascript / PHP to allow exact manipulation
+				- Backend to use simple text field.
 		*/
 
-		echo '<tr>
-				<td><input type="checkbox" name="isEnabled" tabindex=(3*$i - 2)/></td>
-				<td><input type="text" name="label" tabindex=(3*$i - 1)/></td>
-				<td><select name="dataType" tabindex= 3*$i>
-						<option value="dataTypeCName" selected="selected">Customer Name</option>
-						<option value="dataType">Salutation</option>
-						<option value="dataTypeDesignation">Designation</option>
-						<option value="dataTypeCompany">Company Name</option>
-						<option value="dataTypeEmail">Email</option>
-						<option value="dataTypeCustom">Custom</option>
-					</select></td>
+	// Hidden input to store toggle state (until we can figure out how to store it elsewhere)
+	echo 	'
+			<tr>
+				<td><input type="button" name="enable" value="Toggle" tabindex="';
+		$j = (3*$i - 2); echo "$j";
+		echo '" onclick="enableDataEntry(';
+		$j = $i - 1;
+		echo "$j"; echo ')" /><input type="hidden" value="0" name="enableCheck" /></td>';
+		echo '
+			<td><input type="text" name="label" tabindex="';
+		$j = (3*$i - 1); echo "$j";
+		echo '" disabled="true" /></td>
+				<td><select name="dataType" tabindex="';
+		$j = (3*$i); echo "$j";
+		echo '" disabled="true">
+					<option value="dataTypeCName" selected="selected">Customer Name</option>
+					<option value="dataTypeTitle">Salutation</option>
+					<option value="dataTypeDesignation">Designation</option>
+					<option value="dataTypeCompany">Company Name</option>
+					<option value="dataTypeEmail">Email</option>
+					<option value="dataTypeCustom">Custom</option>
+				</select></td>
 			</tr>';
 	}
 	
-	echo '</table>
-	<br><input type="submit" />
-	</form>
+	  echo '</table>
+			<br /><input type="submit" />
+			</form>';
+			
+	echo '<script type="text/javascript"> // Note: If we want PHP to modify the script, it may be necessary to have this in-place on the page.
+		<!--		
+			function enableDataEntry(select)';
+	echo "	{ // Initialise (Poor discipline, determine if there is a better way to initialise)
+			var enableArray = document.getElementsByName('enableCheck');
+			// Warning: Need to pass by reference not by value. Ensure this is the case.
+			var labelArray = document.getElementsByName('label');
+			var typeArray = document.getElementsByName('dataType');";
+			
+	echo '	
+				if(enableArray[select].value="0") // Determine if this works in Javascript
+				{ // Need to pass by reference. Not working currently.
+					labelArray[select].disabled="false";
+					typeArray[select].disabled="false";
+					enableArray[select].value="1";
+				}
+				else { // Assume it has been unchecked.
+					labelArray[select].disabled="true";
+					typeArray[select].disabled="true";
+					enableArray[select].value="0";
+				}
+			}
+		// -->
+		</script>
 	</body>
-	</html>';
+</html>';
 ?>
