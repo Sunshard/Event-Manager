@@ -2,6 +2,12 @@
 <!--AEM Start Page-->
 <!--Created on 13/07/2010 by Brian Wong-->
 <!--CSS Implementation is desirable, as appearance is rather plain.-->
+
+<?php // Additional PHP goes here
+	session_start();
+	// $_SESSION['startCheck'] = "true";
+?>
+
 <html lang="en-SG">
 
 <title>Avantus Event Manager</title>

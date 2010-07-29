@@ -1,6 +1,42 @@
 <?php
 	// Initialise number of base fields to 10. This limit can be altered with the variable below.
 	$fieldQty = 10;
+	session_start();
+	
+	// Variables and server connection initialised.
+	include 'server.inc';
+	$linkID = $_SESSION["useEventID"];
+	
+	// Code below retrieves any data for the form and assists population of its fields.
+	if($_SESSION["newForm"] == "false")
+	{   // Access table
+		$tableName = "Forms";
+
+		// Retrieve all form fields with corresponding eventID
+		$sqlQuery = "SELECT *
+				 FROM $tableName 
+				 WHERE eventID = ?";
+				 
+		$result = sqlsrv_query($dbhandle, $sqlQuery, array(&$linkID));
+	
+		if($result === false)
+		{   // No form found, close connections & throw error
+			session_destroy();
+			sqlsrv_close( $dbhandle);
+			die (FormatErrors( sqlsrv_errors()));
+		}
+		
+		// Retrieve form data as an associative array
+		$formData = sqlsrv_fetch_array( $result, SQLSRV_FETCH_ASSOC );
+		
+		if($formData === false)
+		{ // Data retrieval unsuccessful
+			echo 'Data retrieval unsuccessful<br />';
+			session_destroy();
+			sqlsrv_close( $dbhandle);
+			die (FormatErrors( sqlsrv_errors()));
+		}
+	}
 	
 	// Start document, on-page Javascript included below.
 	echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"> 
@@ -23,9 +59,9 @@
 	*/
 	
 	echo '<body>
-			<form action="formReview.php" method="post">
-
-			<table border="1">
+			<form action="formReview.php" method="post">';
+	echo "	<br /><h1> Event ID: $linkID </h1><br />";
+	echo '	<table border="1">
 			<tr>
 				<th  align="center" valign="middle" scope="col">Enable / Disable</th>
 				<th  align="center" valign="middle" scope="col">Field Label</th>
@@ -52,20 +88,21 @@
 		*/
 
 	// Hidden input to store toggle state (until we can figure out how to store it elsewhere)
+	// Note that the fields have been enabled by removing the disabled property, until the javascript can be debugged.
 	echo 	'
 			<tr>
 				<td><input type="button" name="enable" value="Toggle" tabindex="';
 		$j = (3*$i - 2); echo "$j";
-		echo '" onclick="enableDataEntry(';
+		echo '" id="name'; echo "$j"; echo '" onclick="enableDataEntry(';
 		$j = $i - 1;
 		echo "$j"; echo ')" /><input type="hidden" value="0" name="enableCheck" /></td>';
 		echo '
 			<td><input type="text" name="label" tabindex="';
 		$j = (3*$i - 1); echo "$j";
-		echo '" disabled="true" /></td>
+		echo '"/></td>
 				<td><select name="dataType" tabindex="';
 		$j = (3*$i); echo "$j";
-		echo '" disabled="true">
+		echo '">
 					<option value="dataTypeCName" selected="selected">Customer Name</option>
 					<option value="dataTypeTitle">Salutation</option>
 					<option value="dataTypeDesignation">Designation</option>
@@ -80,7 +117,10 @@
 			<br /><input type="submit" />
 			</form>';
 			
-	echo '<script type="text/javascript"> // Note: If we want PHP to modify the script, it may be necessary to have this in-place on the page.
+/*	MAJOR FLAW in Javascript below. Must remove the disabled from the tag if you want to toggle it. 
+		See http://www.w3.org/TR/2000/WD-DOM-Level-1-20000929/level-one-core.html#ID-6D6AC0F9
+
+echo '<script type="text/javascript"> // Note: If we want PHP to modify the script, it may be necessary to have this in-place on the page.
 		<!--		
 			function enableDataEntry(select)';
 	echo "	{ // Initialise (Poor discipline, determine if there is a better way to initialise)
@@ -90,7 +130,7 @@
 			var typeArray = document.getElementsByName('dataType');";
 			
 	echo '	
-				if(enableArray[select].value="0") // Determine if this works in Javascript
+				if(enableArray[select].value=0) // Determine if this works in Javascript
 				{ // Need to pass by reference. Not working currently.
 					labelArray[select].disabled="false";
 					typeArray[select].disabled="false";
@@ -103,7 +143,7 @@
 				}
 			}
 		// -->
-		</script>
-	</body>
+		</script> */
+echo'	</body>
 </html>';
 ?>
