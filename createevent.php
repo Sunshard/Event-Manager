@@ -1,25 +1,23 @@
 <?php
-	// Include variables and connect to server
+	// Ensure session is running, connect to server
 	session_start();
-	// echo $_SESSION['startCheck'];
 	include 'server.inc';
-	// Table to access
+	
+	// Initialise variables
 	$tableName = "Events";
+	$delay = 5;
+	$tooManyEvents = "Error: Event with identical details already present. Returning to main page.";
+	$eventDetails = array(&$_POST['eventName'], &$_POST['courseCode']);
 
 	// Determine if the details provided are already present.
 	$sqlQuery = "SELECT *
 				 FROM $tableName 
 				 WHERE( (eventName = ?) AND(courseCode = ?) )";
 				 
-	$result = sqlsrv_query($dbhandle, $sqlQuery, array(&$_POST['eventName'], &$_POST['courseCode']));
+	$result = sqlsrv_query($dbhandle, $sqlQuery, $eventDetails);
 	
 	if(sqlsrv_has_rows($result))
-	{ // refuse to allow transaction by freeing resources and returning to the main page.
-		session_destroy();
-		sqlsrv_close( $dbhandle);
-		header( 'refresh: 5; url=/AEM/index.php' );
-		echo '<h1>Error: Event with identical details already present. Returning to main page.</h1>';
-	}	
+		sqlStmtHandler($dbhandle, $tooManyEvents, $delay, $mainPage);
 	
 	// Attempt to insert a new record based on the event profile
 	$sqlInsert = "INSERT INTO $tableName 
@@ -31,7 +29,7 @@
 	$result = sqlsrv_query($dbhandle ,$sqlInsert, $parameters);
 	
 	if($result === false)
-	{ // Insertion has failed, terminate process and inform user
+	{ // Insertion has failed, terminate process and inform user (Determine if error response is suitable)
      echo "Row insertion failed.<br />";
      die (FormatErrors( sqlsrv_errors() ) );
 	}
@@ -39,7 +37,7 @@
 	{   // Free statement
 		sqlsrv_free_stmt( $result);
 		// re-run initial query
-		$result = sqlsrv_query($dbhandle, $sqlQuery, array(&$_POST['eventName'], &$_POST['courseCode']));
+		$result = sqlsrv_query($dbhandle, $sqlQuery, $eventDetails);
 		// Retrieve record EventID 
 		if( sqlsrv_fetch( $result ) === false )
 		{
@@ -53,7 +51,7 @@
 		$_SESSION["useEventID"] = $id; // Store variable in session
 		$_SESSION["newForm"] = "true"; // Indicate that a new form must be created.		
 		header( 'refresh: 5; url=/AEM/createform.php'); // Delay in redirect, appears to resolve Session issues.
-		echo "Matching form found. Transferring to Form Editor.";
+		echo "Please create a form for this event. Transferring to Form Editor.";
 	}
 
 ?>

@@ -2,12 +2,14 @@
 /*
 Code sourced from: http://www.reconn.us/content/view/30/51/
 
+Determine how to authorise user to upload images.Permission currently denied.
+
 Notes: Create a folder named images located in the path you are planning to place the php script you are about to create. 
 Make sure it has write rights for everybody or the scripts won't work ( it won't be able to upload the files into the directory).
 */
 
 //define a maxim size for the uploaded images in Kb
- define ("MAX_SIZE","100"); 
+ define ("MAX_SIZE","1000"); 
 
 //This function reads the extension of the file. It is used to determine if the file  is an image by checking the extension.
  function getExtension($str) {

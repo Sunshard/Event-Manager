@@ -93,7 +93,7 @@
 			<tr>
 				<td><input type="button" name="enable" value="Toggle" tabindex="';
 		$j = (3*$i - 2); echo "$j";
-		echo '" id="name'; echo "$j"; echo '" onclick="enableDataEntry(';
+		echo '" onClick="enableDataEntry(';
 		$j = $i - 1;
 		echo "$j"; echo ')" /><input type="hidden" value="0" name="enableCheck" /></td>';
 		echo '

@@ -5,7 +5,6 @@
 
 <?php // Additional PHP goes here
 	session_start();
-	// $_SESSION['startCheck'] = "true";
 ?>
 
 <html lang="en-SG">
