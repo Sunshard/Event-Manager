@@ -1,18 +1,22 @@
 <?php
 	// Server settings may be modified below
-	$avantusServer = "1-PC";
-	$userName = "WebDev";
+	$serverName = "localhost";
+	$userName = "root";
 	$Pass = "P@ssw0rd";
-	$avantusDb = "AEM";
+	$dbName = "Event_Manager";
 	
 	$mainPage = "index.php";
 	
+	// Following code is specific to MS SQL Server 2008 REPLACE_SECTION
+
+	 /*{	
 	// SQLSRV Driver-Specific Strings (constructed from above information)
-	$sqlsrv_connection = array("UID"=>$userName, "PWD"=>$Pass, "Database"=>$avantusDb);
+	$sqlsrv_connection = array("UID"=>$userName, "PWD"=>$Pass, "Database"=>$dbName);
 	
 	//connection to the database
 	   $dbhandle = sqlsrv_connect($avantusServer, $sqlsrv_connection)
 	   or die( FormatErrors( sqlsrv_errors() ) );
+	} 
 		
 	// FormatErrors code was written by Microsoft (retrieved from AdventureWorks example database on MSDN)
 	function FormatErrors( $errors )
@@ -25,7 +29,7 @@
 			echo "Code: ".$error['code']."<br/>";
 			echo "Message: ".$error['message']."<br/>";
 		}
-	}
+	} */
 	
 	/* This function will release resources and redirect to a specified url.
 		NOTE: It will attempt to any session running.
@@ -39,7 +43,7 @@
 	function sqlStmtHandler($conn, $errmsg, $delay, $redir)
 	{ // If the query fails, release resources and return to the main page.
 			session_destroy();
-			sqlsrv_close( $conn);
+			sqlsrv_close( $conn); // Replace with an implementation independant variation. REPLACE_SECTION
 			header( "refresh: $delay; url=/AEM/$redir" );
 			echo "<h1>Error: $errmsg</h1>";	
 	}
