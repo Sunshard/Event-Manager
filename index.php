@@ -1,21 +1,17 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"> 
-<!--EM Start Page-->
+<!--AEM Start Page-->
 <!--Created on 13/07/2010 by Brian Wong-->
 <!--CSS Implementation is desirable, as appearance is rather plain.-->
 
-<?php // Additional PHP goes here
-	session_start();
-?>
-
 <html lang="en-SG">
 
-<title>Event Manager</title>
+<title>Avantus Event Manager</title>
 
 <body>
 
 	<!--Provide user option to either search existing events or create a new one.-->
 	<p>
-		Welcome to the Event Manager.<br />
+		Welcome to the Avantus Event Manager.<br />
 		To modify an existing template, please enter the event ID: <br />
 		<form action="searchForm.php" method="post">
 			<input type="text" name="searchEvents" /><br />

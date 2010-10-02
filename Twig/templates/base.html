@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"> 
+<!-- {# Twig base template for generated pages, see www.twig-project.org #} -->
+<html>	
+	<head>
+	{% block head %}
+		<title>{% block title page_title|title %} - Event Manager</title>
+		<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+		<link rel="stylesheet" href="{{ rootdir }}/css/common.css">
+	{% endblock %}
+	</head>
+		
+	<body>
+	{% block body %}
+	
+		{% block navbar %}
+		<div id="navbar">
+	
+		</div>
+		{% endblock %}
+	
+		<div id="content">
+		{% block content %}
+		
+		{% endblock %}
+		</div>
+
+	{% endblock %}
+	</body>
+		
+</html>
